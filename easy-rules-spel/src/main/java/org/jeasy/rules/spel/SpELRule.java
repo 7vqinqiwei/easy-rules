@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -28,26 +28,65 @@ import org.jeasy.rules.api.Condition;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
 import org.jeasy.rules.core.BasicRule;
+
+import org.springframework.expression.BeanResolver;
 import org.springframework.expression.ParserContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A {@link Rule} implementation that uses <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions">SpEL</a> to evaluate and execute the rule.
+ * A {@link Rule} implementation that uses 
+ * <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions">SpEL</a>
+ * to evaluate and execute the rule.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 public class SpELRule extends BasicRule {
 
     private Condition condition = Condition.FALSE;
-    private List<Action> actions = new ArrayList<>();
+    private final List<Action> actions = new ArrayList<>();
+    private final ParserContext parserContext;
+    private BeanResolver beanResolver;
 
     /**
      * Create a new SpEL rule.
      */
     public SpELRule() {
+        this(ParserContext.TEMPLATE_EXPRESSION);
+    }
+
+    /**
+     * Create a new SpEL rule.
+     * 
+     * @param parserContext used when parsing expressions
+     */
+    public SpELRule(ParserContext parserContext) {
         super(Rule.DEFAULT_NAME, Rule.DEFAULT_DESCRIPTION, Rule.DEFAULT_PRIORITY);
+        this.parserContext = parserContext;
+    }
+
+    /**
+     * Create a new SpEL rule.
+     *
+     * @param beanResolver used to resolve bean references in expressions
+     */
+    public SpELRule(BeanResolver beanResolver) {
+        super(Rule.DEFAULT_NAME, Rule.DEFAULT_DESCRIPTION, Rule.DEFAULT_PRIORITY);
+        this.parserContext = ParserContext.TEMPLATE_EXPRESSION;
+        this.beanResolver = beanResolver;
+    }
+
+    /**
+     * Create a new SpEL rule.
+     *
+     * @param parserContext used when parsing expressions
+     * @param beanResolver used to resolve bean references in expressions
+     */
+    public SpELRule(ParserContext parserContext, BeanResolver beanResolver) {
+        super(Rule.DEFAULT_NAME, Rule.DEFAULT_DESCRIPTION, Rule.DEFAULT_PRIORITY);
+        this.parserContext = parserContext;
+        this.beanResolver = beanResolver;
     }
 
     /**
@@ -89,18 +128,7 @@ public class SpELRule extends BasicRule {
      * @return this rule
      */
     public SpELRule when(String condition) {
-        this.condition = new SpELCondition(condition);
-        return this;
-    }
-
-    /**
-     * Specify the rule's condition as SpEL expression.
-     * @param condition of the rule
-     * @param parserContext the SpEL parser context
-     * @return this rule
-     */
-    public SpELRule when(String condition, ParserContext parserContext) {
-        this.condition = new SpELCondition(condition, parserContext);
+        this.condition = new SpELCondition(condition, parserContext, beanResolver);
         return this;
     }
 
@@ -110,18 +138,7 @@ public class SpELRule extends BasicRule {
      * @return this rule
      */
     public SpELRule then(String action) {
-        this.actions.add(new SpELAction(action));
-        return this;
-    }
-
-    /**
-     * Add an action specified as an SpEL expression to the rule.
-     * @param action to add to the rule
-     * @param parserContext the SpEL parser context
-     * @return this rule
-     */
-    public SpELRule then(String action, ParserContext parserContext) {
-        this.actions.add(new SpELAction(action, parserContext));
+        this.actions.add(new SpELAction(action, parserContext, beanResolver));
         return this;
     }
 

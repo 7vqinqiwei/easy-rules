@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -32,9 +32,8 @@ import java.lang.reflect.Method;
  */
 class ActionMethodOrderBean implements Comparable<ActionMethodOrderBean> {
 
-    private Method method;
-
-    private int order;
+    private final Method method;
+    private final int order;
 
     ActionMethodOrderBean(final Method method, final int order) {
         this.method = method;
@@ -68,9 +67,7 @@ class ActionMethodOrderBean implements Comparable<ActionMethodOrderBean> {
         ActionMethodOrderBean that = (ActionMethodOrderBean) o;
 
         if (order != that.order) return false;
-        if (!method.equals(that.method)) return false;
-
-        return true;
+        return method.equals(that.method);
     }
 
     @Override

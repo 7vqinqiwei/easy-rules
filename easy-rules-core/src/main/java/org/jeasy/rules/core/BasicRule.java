@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,8 @@
  *  THE SOFTWARE.
  */
 package org.jeasy.rules.core;
+
+import java.util.Objects;
 
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rule;
@@ -141,7 +143,7 @@ public class BasicRule implements Rule {
             return false;
         if (!name.equals(basicRule.name))
             return false;
-        return !(description != null ? !description.equals(basicRule.description) : basicRule.description != null);
+        return Objects.equals(description, basicRule.description);
 
     }
 

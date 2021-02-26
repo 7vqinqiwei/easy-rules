@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MVELConditionTest {
 
     @Test
-    public void testMVELExpressionEvaluation() throws Exception {
+    public void testMVELExpressionEvaluation() {
         // given
         Condition isAdult = new MVELCondition("person.age > 18");
         Facts facts = new Facts();
@@ -46,8 +46,9 @@ public class MVELConditionTest {
         assertThat(evaluationResult).isTrue();
     }
 
-    @Test
-    public void whenDeclaredFactIsNotPresent_thenShouldReturnFalse() throws Exception {
+    // Note this behaviour is different in SpEL, where a missing fact is silently ignored and returns false
+    @Test(expected = RuntimeException.class)
+    public void whenDeclaredFactIsNotPresent_thenShouldThrowRuntimeException() {
         // given
         Condition isHot = new MVELCondition("temperature > 30");
         Facts facts = new Facts();
@@ -56,7 +57,7 @@ public class MVELConditionTest {
         boolean evaluationResult = isHot.evaluate(facts);
 
         // then
-        assertThat(evaluationResult).isFalse();
+        // expected exception
     }
 
     @Test

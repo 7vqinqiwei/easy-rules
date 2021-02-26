@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@ import static java.lang.String.format;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 import org.jeasy.rules.annotation.Action;
@@ -119,39 +120,38 @@ class RuleDefinitionValidator {
     private boolean validParameters(final Method method) {
         int notAnnotatedParameterCount = 0;
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-        for(Annotation[] annotations : parameterAnnotations){
-            if(annotations.length == 0){
+        for (Annotation[] annotations : parameterAnnotations) {
+            if (annotations.length == 0) {
                 notAnnotatedParameterCount += 1;
             } else {
                 //Annotation types has to be Fact
-                for(Annotation annotation : annotations){
-                    if(!annotation.annotationType().equals(Fact.class)){
+                for (Annotation annotation : annotations) {
+                    if (!annotation.annotationType().equals(Fact.class)) {
                         return false;
                     }
                 }
             }
         }
-        if(notAnnotatedParameterCount > 1){
+        if (notAnnotatedParameterCount > 1) {
             return false;
         }
         if (notAnnotatedParameterCount == 1) {
-            Class<?>[] parameterTypes = method.getParameterTypes();
-            int index = getIndexOfParameterOfTypeFacts(method); // TODO use method.getParameters when moving to Java 8
-            return Facts.class.isAssignableFrom(parameterTypes[index]);
+            Parameter notAnnotatedParameter = getNotAnnotatedParameter(method);
+            if (notAnnotatedParameter != null) {
+                return Facts.class.isAssignableFrom(notAnnotatedParameter.getType());
+            }
         }
         return true;
     }
 
-    private int getIndexOfParameterOfTypeFacts(Method method) {
-        Class<?>[] parameterTypes = method.getParameterTypes();
-        int index = 0;
-        for (Class<?> parameterType : parameterTypes) {
-            if (Facts.class.isAssignableFrom(parameterType)) {
-                return index;
+    private Parameter getNotAnnotatedParameter(Method method) {
+        Parameter[] parameters = method.getParameters();
+        for (Parameter parameter : parameters) {
+            if (parameter.getAnnotations().length == 0) {
+                return parameter;
             }
-            index++;
         }
-        return 0;
+        return null;
     }
 
     private boolean isActionMethodWellDefined(final Method method) {

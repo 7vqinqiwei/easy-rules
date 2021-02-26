@@ -10,7 +10,7 @@
 
     <groupId>org.jeasy</groupId>
     <artifactId>easy-rules</artifactId>
-    <version>3.4.0-SNAPSHOT</version>
+    <version>4.1.1-SNAPSHOT</version>
 
     <modules>
         <module>easy-rules-archetype</module>
@@ -19,6 +19,7 @@
         <module>easy-rules-mvel</module>
         <module>easy-rules-support</module>
         <module>easy-rules-spel</module>
+        <module>easy-rules-jexl</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -29,19 +30,17 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.7</java.version>
-        <junit.version>4.12</junit.version>
-        <assertj.version>2.9.1</assertj.version>
-        <mockito.version>2.27.0</mockito.version>
-        <system-rules.version>1.19.0</system-rules.version>
-        <slf4j-api.version>1.7.26</slf4j-api.version>
-        <jackson.version>2.9.9</jackson.version>
-        <maven-cobertura-plugin.version>2.7</maven-cobertura-plugin.version>
-        <maven-coveralls-plugin.version>4.3.0</maven-coveralls-plugin.version>
+        <java.version>1.8</java.version>
+        <junit.version>4.13.1</junit.version>
+        <assertj.version>3.18.1</assertj.version>
+        <mockito.version>3.6.0</mockito.version>
+        <system-lambda.version>1.1.1</system-lambda.version>
+        <slf4j.version>1.7.30</slf4j.version>
+        <jackson.version>2.11.3</jackson.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-        <maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <maven-license-plugin.version>3.0</maven-license-plugin.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
     </properties>
@@ -85,15 +84,14 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.easyrules</groupId>
-                <artifactId>easyrules-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>${slf4j-api.version}</version>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j.version}</version>
             </dependency>
 
             <dependency>
@@ -102,14 +100,12 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj.version}</version>
                 <scope>test</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
@@ -143,11 +139,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.eluder.coveralls</groupId>
-                    <artifactId>coveralls-maven-plugin</artifactId>
-                    <version>${maven-coveralls-plugin.version}</version>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
@@ -162,14 +153,36 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-javadoc-plugin.version}</version>
-                    <configuration>
-                        <doclint>none</doclint>
-                    </configuration>
                     <executions>
                         <execution>
                             <phase>install</phase>
                             <goals>
                                 <goal>javadoc</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${maven-license-plugin.version}</version>
+                    <configuration>
+                        <properties>
+                            <currentYear>2020</currentYear>
+                        </properties>
+                        <strictCheck>true</strictCheck>
+                        <includes>
+                            <include>src/**/*.java</include>
+                        </includes>
+                        <mapping>
+                            <java>SLASHSTAR_STYLE</java>
+                        </mapping>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>format</goal>
                             </goals>
                         </execution>
                     </executions>

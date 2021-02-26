@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jeasy</groupId>
         <artifactId>easy-rules</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>4.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>easy-rules-tutorials</artifactId>
@@ -13,12 +13,11 @@
     <name>Easy Rules tutorials</name>
 
     <properties>
-        <maven-exec-plugin.version>1.6.0</maven-exec-plugin.version>
-        <servlet.version>3.1.0</servlet.version>
-        <maven-war-plugin.version>2.6</maven-war-plugin.version>
-        <tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
-        <maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
-        <slf4j.version>1.7.25</slf4j.version>
+        <maven-exec-plugin.version>3.0.0</maven-exec-plugin.version>
+        <servlet.version>4.0.1</servlet.version>
+        <maven-war-plugin.version>3.3.1</maven-war-plugin.version>
+        <jetty-maven-plugin.version>9.4.34.v20201102</jetty-maven-plugin.version>
+        <maven-dependency-plugin.version>3.1.2</maven-dependency-plugin.version>
     </properties>
 
     <scm>
@@ -34,8 +33,8 @@
     </issueManagement>
 
     <ciManagement>
-        <system>Travis CI</system>
-        <url>https://travis-ci.org/j-easy/easy-rules</url>
+        <system>Github Actions</system>
+        <url>https://github.com/j-easy/easy-rules/actions</url>
     </ciManagement>
 
     <developers>
@@ -76,9 +75,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
-
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -109,13 +106,9 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>${tomcat7-maven-plugin.version}</version>
-                <configuration>
-                    <port>8080</port>
-                    <path>/</path>
-                </configuration>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty-maven-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -130,6 +123,13 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <header>${project.parent.basedir}/licence-header-template.txt</header>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -212,6 +212,9 @@
                         <version>${maven-exec-plugin.version}</version>
                         <configuration>
                             <mainClass>org.jeasy.rules.tutorials.shop.Launcher</mainClass>
+                            <arguments>
+                                <argument>${project.basedir}/src/main/java/org/jeasy/rules/tutorials/shop/alcohol-rule.yml</argument>
+                            </arguments>
                         </configuration>
                     </plugin>
                 </plugins>

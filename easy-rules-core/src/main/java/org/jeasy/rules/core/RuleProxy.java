@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -37,7 +37,12 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static java.lang.String.format;
 
@@ -48,7 +53,7 @@ import static java.lang.String.format;
  */
 public class RuleProxy implements InvocationHandler {
 
-    private Object target;
+    private final Object target;
     private String name;
     private String description;
     private Integer priority;
@@ -59,13 +64,8 @@ public class RuleProxy implements InvocationHandler {
     private Method toStringMethod;
     private org.jeasy.rules.annotation.Rule annotation;
 
-    private static RuleDefinitionValidator ruleDefinitionValidator = new RuleDefinitionValidator();
-
+    private static final RuleDefinitionValidator ruleDefinitionValidator = new RuleDefinitionValidator();
     private static final Logger LOGGER = LoggerFactory.getLogger(RuleProxy.class);
-
-    private RuleProxy(final Object target) {
-        this.target = target;
-    }
 
     /**
      * Makes the rule object implement the {@link Rule} interface.
@@ -85,6 +85,10 @@ public class RuleProxy implements InvocationHandler {
                     new RuleProxy(rule));
         }
         return result;
+    }
+
+    private RuleProxy(final Object target) {
+        this.target = target;
     }
 
     @Override
@@ -121,12 +125,13 @@ public class RuleProxy implements InvocationHandler {
             List<Object> actualParameters = getActualParameters(conditionMethod, facts);
             return conditionMethod.invoke(target, actualParameters.toArray()); // validated upfront
         } catch (NoSuchFactException e) {
-            LOGGER.error("Rule '{}' has been evaluated to false due to a declared but missing fact '{}' in {}",
+            LOGGER.warn("Rule '{}' has been evaluated to false due to a declared but missing fact '{}' in {}",
                     getTargetClass().getName(), e.getMissingFact(), facts);
             return false;
         } catch (IllegalArgumentException e) {
-            String error = "Types of injected facts in method '%s' in rule '%s' do not match parameters types";
-            throw new RuntimeException(format(error, conditionMethod.getName(), getTargetClass().getName()), e);
+            LOGGER.warn("Types of injected facts in method '{}' in rule '{}' do not match parameters types",
+                    conditionMethod.getName(), getTargetClass().getName(), e);
+            return false;
         }
     }
 
@@ -142,11 +147,15 @@ public class RuleProxy implements InvocationHandler {
 
     private Object compareToMethod(final Object[] args) throws Exception {
         Method compareToMethod = getCompareToMethod();
-        if (compareToMethod != null) {
-            return compareToMethod.invoke(target, args);
+        Object otherRule = args[0]; // validated upfront
+        if (compareToMethod != null && Proxy.isProxyClass(otherRule.getClass())) {
+            if (compareToMethod.getParameters().length != 1) {
+                throw new IllegalArgumentException("compareTo method must have a single argument");
+            }
+            RuleProxy ruleProxy = (RuleProxy) Proxy.getInvocationHandler(otherRule);
+            return compareToMethod.invoke(target, ruleProxy.getTarget());
         } else {
-            Rule otherRule = (Rule) args[0];
-            return compareTo(otherRule);
+            return compareTo((Rule) otherRule);
         }
     }
 
@@ -185,7 +194,7 @@ public class RuleProxy implements InvocationHandler {
         }
         String otherDescription = otherRule.getDescription();
         String description =  getRuleDescription();
-        return !(description != null ? !description.equals(otherDescription) : otherDescription != null);
+        return Objects.equals(description, otherDescription);
     }
 
     private int hashCodeMethod() throws Exception {
@@ -346,6 +355,10 @@ public class RuleProxy implements InvocationHandler {
                 description.append(",");
             }
         }
+    }
+    
+    public Object getTarget() {
+        return target;
     }
 
     private Class<?> getTargetClass() {

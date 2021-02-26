@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,7 +42,7 @@ public class RuleBuilderTest {
     private Action action1, action2;
 
     @Test
-    public void testDefaultRuleCreationWithDefaultValues() throws Exception {
+    public void testDefaultRuleCreationWithDefaultValues() {
         // when
         Rule rule = new RuleBuilder().build();
 
@@ -55,7 +54,7 @@ public class RuleBuilderTest {
     }
 
     @Test
-    public void testDefaultRuleCreationWithCustomValues() throws Exception {
+    public void testDefaultRuleCreationWithCustomValues() {
         // when
         Rule rule = new RuleBuilder()
                 .name("myRule")
@@ -71,7 +70,7 @@ public class RuleBuilderTest {
         assertThat(rule.getDescription()).isEqualTo("myRuleDescription");
         assertThat(rule.getPriority()).isEqualTo(3);
         assertThat(rule).isInstanceOf(DefaultRule.class);
-        assertThat(rule).extracting("condition").containsExactly(condition);
-        assertThat(rule).extracting("actions").containsExactly(asList(action1, action2));
+        assertThat(rule).extracting("condition").isSameAs(condition);
+        assertThat(rule).extracting("actions").asList().containsExactly(action1, action2);
     }
 }

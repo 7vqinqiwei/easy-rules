@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -25,27 +25,20 @@ package org.jeasy.rules.spel;
 
 import org.jeasy.rules.api.Action;
 import org.jeasy.rules.api.Facts;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.SystemOutRule;
-import org.junit.rules.ExpectedException;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.common.TemplateParserContext;
 
+import static com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class SpELActionTest {
-
-    @Rule
-    public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
-
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void testSpELActionExecution() throws Exception {
         // given
-        Action markAsAdult = new SpELAction("#person.setAdult(true)");
+        Action markAsAdult = new SpELAction("#{ ['person'].setAdult(true) }");
         Facts facts = new Facts();
         Person foo = new Person("foo", 20);
         facts.put("person", foo);
@@ -60,45 +53,45 @@ public class SpELActionTest {
     @Test
     public void testSpELFunctionExecution() throws Exception {
         // given
-        Action printAction = new SpELAction("T(org.jeasy.rules.spel.Person).sayHello()");
+        Action printAction = new SpELAction("#{ T(org.jeasy.rules.spel.Person).sayHello() }");
         Facts facts = new Facts();
 
         // when
-        printAction.execute(facts);
+        String output = tapSystemOutNormalized(
+                () -> printAction.execute(facts));
 
         // then
-        assertThat(systemOutRule.getLog()).contains("hello");
+        assertThat(output).isEqualTo("hello\n");
     }
 
     @Test
-    public void testSpELActionExecutionWithFailure() throws Exception {
+    public void testSpELActionExecutionWithFailure() {
         // given
-        expectedException.expect(Exception.class);
-        expectedException.expectMessage("EL1004E: Method call: Method setBlah(java.lang.Boolean) cannot be found on type org.jeasy.rules.spel.Person");
-        Action action = new SpELAction("#person.setBlah(true)");
+        Action action = new SpELAction("#{ T(org.jeasy.rules.spel.Person).sayHi() }");
         Facts facts = new Facts();
         Person foo = new Person("foo", 20);
         facts.put("person", foo);
 
         // when
-        action.execute(facts);
-
-        // then
-        // excepted exception
+        assertThatThrownBy(() -> action.execute(facts))
+                // then
+                .isInstanceOf(Exception.class)
+                .hasMessage("EL1004E: Method call: Method sayHi() cannot be found on type org.jeasy.rules.spel.Person");
     }
 
     @Test
     public void testSpELActionWithExpressionAndParserContext() throws Exception {
         // given
-        ParserContext context = new TemplateParserContext();
-        Action printAction = new SpELAction("#{ T(org.jeasy.rules.spel.Person).sayHello() }", context);
+        ParserContext context = new TemplateParserContext("%{", "}");
+        Action printAction = new SpELAction("%{ T(org.jeasy.rules.spel.Person).sayHello() }", context);
         Facts facts = new Facts();
 
         // when
-        printAction.execute(facts);
+        String output = tapSystemOutNormalized(
+                () -> printAction.execute(facts));
 
         // then
-        assertThat(systemOutRule.getLog()).contains("hello");
+        assertThat(output).isEqualTo("hello\n");
 
     }
 }

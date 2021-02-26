@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,24 @@ package org.jeasy.rules.core;
 
 
 import org.assertj.core.api.Assertions;
-import org.jeasy.rules.annotation.*;
+import org.jeasy.rules.annotation.AnnotatedRuleWithActionMethodHavingMoreThanOneArgumentOfTypeFacts;
+import org.jeasy.rules.annotation.AnnotatedRuleWithActionMethodHavingOneArgumentNotOfTypeFacts;
+import org.jeasy.rules.annotation.AnnotatedRuleWithActionMethodHavingOneArgumentOfTypeFacts;
+import org.jeasy.rules.annotation.AnnotatedRuleWithActionMethodThatReturnsNonVoidType;
+import org.jeasy.rules.annotation.AnnotatedRuleWithConditionMethodHavingNonBooleanReturnType;
+import org.jeasy.rules.annotation.AnnotatedRuleWithConditionMethodHavingOneArgumentNotOfTypeFacts;
+import org.jeasy.rules.annotation.AnnotatedRuleWithMetaRuleAnnotation;
+import org.jeasy.rules.annotation.AnnotatedRuleWithMoreThanOnePriorityMethod;
+import org.jeasy.rules.annotation.AnnotatedRuleWithMultipleAnnotatedParametersAndOneParameterOfSubTypeFacts;
+import org.jeasy.rules.annotation.AnnotatedRuleWithMultipleAnnotatedParametersAndOneParameterOfTypeFacts;
+import org.jeasy.rules.annotation.AnnotatedRuleWithNonPublicActionMethod;
+import org.jeasy.rules.annotation.AnnotatedRuleWithNonPublicConditionMethod;
+import org.jeasy.rules.annotation.AnnotatedRuleWithNonPublicPriorityMethod;
+import org.jeasy.rules.annotation.AnnotatedRuleWithOneParameterNotAnnotatedWithFactAndNotOfTypeFacts;
+import org.jeasy.rules.annotation.AnnotatedRuleWithPriorityMethodHavingArguments;
+import org.jeasy.rules.annotation.AnnotatedRuleWithPriorityMethodHavingNonIntegerReturnType;
+import org.jeasy.rules.annotation.AnnotatedRuleWithoutActionMethod;
+import org.jeasy.rules.annotation.AnnotatedRuleWithoutConditionMethod;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,7 +51,7 @@ public class RuleDefinitionValidatorTest {
     private RuleDefinitionValidator ruleDefinitionValidator;
 
     @Before
-    public void setup(){
+    public void setup() {
         ruleDefinitionValidator = new RuleDefinitionValidator();
     }
 
@@ -47,7 +64,7 @@ public class RuleDefinitionValidatorTest {
     }
 
     @Test
-    public void withCustomAnnotationThatIsItselfAnnotatedWithTheRuleAnnotation() throws Throwable {
+    public void withCustomAnnotationThatIsItselfAnnotatedWithTheRuleAnnotation() {
         ruleDefinitionValidator.validateRuleDefinition(new AnnotatedRuleWithMetaRuleAnnotation());
     }
 

@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,8 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.when;
 
 public class RulesEngineListenerTest extends AbstractTest {
 
@@ -63,7 +64,7 @@ public class RulesEngineListenerTest extends AbstractTest {
     }
 
     @Test
-    public void rulesEngineListenersShouldBeCalledInOrderWhenCheckingRules() throws Exception {
+    public void rulesEngineListenersShouldBeCalledInOrderWhenCheckingRules() {
         // Given
         when(rule1.evaluate(facts)).thenReturn(true);
         rules.register(rule1);

@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -23,12 +23,17 @@
  */
 package org.jeasy.rules.spel;
 
+import org.assertj.core.api.Assertions;
 import org.jeasy.rules.api.Condition;
 import org.jeasy.rules.api.Facts;
 import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.expression.BeanResolver;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.common.TemplateParserContext;
 
+import static com.github.stefanbirkner.systemlambda.SystemLambda.tapSystemOutNormalized;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SpELConditionTest {
@@ -36,10 +41,9 @@ public class SpELConditionTest {
     @Test
     public void testSpELExpressionEvaluation() {
         // given
-        Condition isAdult = new SpELCondition("#person.age > 18");
+        Condition isAdult = new SpELCondition("#{ ['person'].age > 18 }");
         Facts facts = new Facts();
         facts.put("person", new Person("foo", 20));
-
         // when
         boolean evaluationResult = isAdult.evaluate(facts);
 
@@ -47,10 +51,11 @@ public class SpELConditionTest {
         assertThat(evaluationResult).isTrue();
     }
 
+    // Note this behaviour is different in MVEL, where a missing fact yields an exception
     @Test
     public void whenDeclaredFactIsNotPresent_thenShouldReturnFalse() {
         // given
-        Condition isHot = new SpELCondition("#temperature > 30");
+        Condition isHot = new SpELCondition("#{ ['temperature'] > 30 }");
         Facts facts = new Facts();
 
         // when
@@ -72,5 +77,31 @@ public class SpELConditionTest {
 
         // then
         assertThat(evaluationResult).isTrue();
+    }
+
+    @Test
+    public void testSpELConditionWithExpressionAndParserContextAndBeanResolver() throws Exception {
+
+        ApplicationContext applicationContext = new AnnotationConfigApplicationContext(MySpringAppConfig.class);
+        BeanResolver beanResolver = new SimpleBeanResolver(applicationContext);
+
+        SpELRule spELRule = new SpELRule(beanResolver);
+        // setting an condition to be evaluated
+        spELRule.when("#{ ['person'].age >= 18 }");
+        // provided an bean resolver that can resolve "myGreeter"
+        spELRule.then("#{ @myGreeter.greeting(#person.name) }");
+
+        // given
+        Facts facts = new Facts();
+        facts.put("person", new Person("jack", 19));
+
+        // then
+        boolean evaluationResult = spELRule.evaluate(facts);
+        Assertions.assertThat(evaluationResult).isTrue();
+
+        String output = tapSystemOutNormalized(
+                () -> spELRule.execute(facts));
+        assertThat(output).isEqualTo("Bonjour jack!\n");
+
     }
 }

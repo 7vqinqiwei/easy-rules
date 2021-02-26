@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -34,19 +34,23 @@ public interface RulesEngineListener {
 
     /**
      * Triggered before evaluating the rule set.
-     * <strong>When this listener is used with a {@link InferenceRulesEngine}, this method will be triggered before the evaluation of each candidate rule set in each iteration.</strong>
+     * <strong>When this listener is used with a {@link InferenceRulesEngine},
+     * this method will be triggered before the evaluation of each candidate rule
+     * set in each iteration.</strong>
      *
      * @param rules to fire
      * @param facts present before firing rules
      */
-    void beforeEvaluate(Rules rules, Facts facts);
+    default void beforeEvaluate(Rules rules, Facts facts) { }
 
     /**
      * Triggered after executing the rule set
-     * <strong>When this listener is used with a {@link InferenceRulesEngine}, this method will be triggered after the execution of each candidate rule set in each iteration.</strong>
+     * <strong>When this listener is used with a {@link InferenceRulesEngine},
+     * this method will be triggered after the execution of each candidate rule
+     * set in each iteration.</strong>
      *
      * @param rules fired
      * @param facts present after firing rules
      */
-    void afterExecute(Rules rules, Facts facts);
+    default void afterExecute(Rules rules, Facts facts) { }
 }

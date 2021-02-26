@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -28,7 +28,7 @@ package org.jeasy.rules.tutorials.fizzbuzz;
  */
 public class FizzBuzz {                      // Everything in Java is a class
   public static void main(String[] args) {   // Every program must have main()
-    for(int i = 1; i <= 100; i++) {                    // count from 1 to 100
+    for (int i = 1; i <= 100; i++) {                    // count from 1 to 100
       if (((i % 5) == 0) && ((i % 7) == 0))            // A multiple of both?
         System.out.print("fizzbuzz");    
       else if ((i % 5) == 0) System.out.print("fizz"); // else a multiple of 5?

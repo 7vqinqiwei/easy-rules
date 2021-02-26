@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BasicRuleTest extends AbstractTest {
 
     @Test
-    public void basicRuleEvaluateShouldReturnFalse() throws Exception {
+    public void basicRuleEvaluateShouldReturnFalse() {
         BasicRule basicRule = new BasicRule();
         assertThat(basicRule.evaluate(facts)).isFalse();
     }
@@ -58,7 +58,7 @@ public class BasicRuleTest extends AbstractTest {
         assertThat(rules).containsSequence(rule1, rule3, rule2);
     }
 
-    class FirstRule extends BasicRule {
+    static class FirstRule extends BasicRule {
         @Override
         public int getPriority() {
             return 1;
@@ -75,7 +75,7 @@ public class BasicRuleTest extends AbstractTest {
         }
     }
 
-    class SecondRule extends BasicRule {
+    static class SecondRule extends BasicRule {
         @Override
         public int getPriority() {
             return 3;
@@ -92,7 +92,7 @@ public class BasicRuleTest extends AbstractTest {
         }
     }
 
-    class ThirdRule extends BasicRule {
+    static class ThirdRule extends BasicRule {
         @Override
         public int getPriority() {
             return 2;

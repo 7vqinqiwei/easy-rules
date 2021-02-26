@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -27,22 +27,18 @@ import org.jeasy.rules.api.Condition;
 import org.jeasy.rules.api.Facts;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
 /**
- * This class is an implementation of {@link Condition} that uses <a href="https://github.com/mvel/mvel">MVEL</a> to evaluate the condition.
+ * This class is an implementation of {@link Condition} that uses
+ * <a href="https://github.com/mvel/mvel">MVEL</a> to evaluate the condition.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 public class MVELCondition implements Condition {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MVELCondition.class);
-
-    private String expression;
-    private Serializable compiledExpression;
+    private final Serializable compiledExpression;
 
     /**
      * Create a new {@link MVELCondition}.
@@ -50,28 +46,22 @@ public class MVELCondition implements Condition {
      * @param expression the condition written in expression language
      */
     public MVELCondition(String expression) {
-        this.expression = expression;
         compiledExpression = MVEL.compileExpression(expression);
     }
 
     /**
      * Create a new {@link MVELCondition}.
      *
-     * @param expression    the condition written in expression language
+     * @param expression the condition written in expression language
      * @param parserContext the MVEL parser context
      */
     public MVELCondition(String expression, ParserContext parserContext) {
-        this.expression = expression;
         compiledExpression = MVEL.compileExpression(expression, parserContext);
     }
 
     @Override
     public boolean evaluate(Facts facts) {
-        try {
-            return (boolean) MVEL.executeExpression(compiledExpression, facts.asMap());
-        } catch (Exception e) {
-            LOGGER.error("Unable to evaluate expression: '" + expression + "' on facts: " + facts, e);
-            return false;
-        }
+        // MVEL.evalToBoolean does not accept compiled expressions..
+        return (boolean) MVEL.executeExpression(compiledExpression, facts.asMap());
     }
 }

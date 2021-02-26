@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ public class AnnotatedRuleWithActionMethodHavingOneArgumentNotOfTypeFacts {
     }
 
     @Action
-    public void then(int i) throws Exception {
+    public void then(int i) {
         if (i == 1) {
             executed = true;
         }

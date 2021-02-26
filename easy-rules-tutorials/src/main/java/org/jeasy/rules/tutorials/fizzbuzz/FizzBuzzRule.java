@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2017, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
  */
 package org.jeasy.rules.tutorials.fizzbuzz;
 
-import org.jeasy.rules.support.UnitRuleGroup;
+import org.jeasy.rules.support.composite.UnitRuleGroup;
 
 public class FizzBuzzRule extends UnitRuleGroup {
 

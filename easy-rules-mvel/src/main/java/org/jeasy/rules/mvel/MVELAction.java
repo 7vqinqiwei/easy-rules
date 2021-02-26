@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,8 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 
 /**
- * This class is an implementation of {@link Action} that uses <a href="https://github.com/mvel/mvel">MVEL</a> to execute the action.
+ * This class is an implementation of {@link Action} that uses
+ * <a href="https://github.com/mvel/mvel">MVEL</a> to execute the action.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
@@ -41,8 +42,8 @@ public class MVELAction implements Action {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MVELAction.class);
 
-    private String expression;
-    private Serializable compiledExpression;
+    private final String expression;
+    private final Serializable compiledExpression;
 
     /**
      * Create a new {@link MVELAction}.

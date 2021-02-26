@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FactInjectionTest {
 
     @Test
-    public void declaredFactsShouldBeCorrectlyInjectedByNameOrType() throws Exception {
+    public void declaredFactsShouldBeCorrectlyInjectedByNameOrType() {
         // Given
         Object fact1 = new Object();
         Object fact2 = new Object();
@@ -62,7 +62,7 @@ public class FactInjectionTest {
     }
 
     @Test
-    public void rulesShouldBeExecutedWhenFactsAreCorrectlyInjected() throws Exception {
+    public void rulesShouldBeExecutedWhenFactsAreCorrectlyInjected() {
         // Given
         Facts facts = new Facts();
         facts.put("rain", true);
@@ -81,23 +81,24 @@ public class FactInjectionTest {
         assertThat(weatherRule.isExecuted()).isTrue();
     }
 
-    @Test(expected = RuntimeException.class)
-    public void whenFactTypeDoesNotMatchParameterType_thenShouldThrowRuntimeException() throws Exception {
+    @Test
+    public void whenFactTypeDoesNotMatchParameterType_thenTheRuleShouldNotBeExecuted() {
         // Given
         Facts facts = new Facts();
         facts.put("age", "foo");
-        Rules rules = new Rules(new AgeRule());
+        AgeRule ageRule = new AgeRule();
+        Rules rules = new Rules(ageRule);
         RulesEngine rulesEngine = new DefaultRulesEngine();
 
         // When
         rulesEngine.fire(rules, facts);
 
         // Then
-        // expected exception
+        assertThat(ageRule.isExecuted()).isFalse();
     }
 
     @Test
-    public void whenADeclaredFactIsMissingInEvaluateMethod_thenTheRuleShouldNotBeExecuted() throws Exception {
+    public void whenADeclaredFactIsMissingInEvaluateMethod_thenTheRuleShouldNotBeExecuted() {
         // Given
         Facts facts = new Facts();
         AgeRule ageRule = new AgeRule();
@@ -112,7 +113,7 @@ public class FactInjectionTest {
     }
 
     @Test
-    public void whenADeclaredFactIsMissingInExecuteMethod_thenTheRuleShouldNotBeExecuted() throws Exception {
+    public void whenADeclaredFactIsMissingInExecuteMethod_thenTheRuleShouldNotBeExecuted() {
         // Given
         Facts facts = new Facts();
         AnotherDummyRule rule = new AnotherDummyRule();
@@ -127,7 +128,7 @@ public class FactInjectionTest {
     }
 
     @Rule
-    class DummyRule {
+	static class DummyRule {
 
         private Object fact1, fact2;
         private Facts facts;
@@ -158,7 +159,7 @@ public class FactInjectionTest {
     }
 
     @Rule
-    class AnotherDummyRule {
+	static class AnotherDummyRule {
 
         private boolean isExecuted;
 
@@ -179,7 +180,7 @@ public class FactInjectionTest {
     }
 
     @Rule
-    class AgeRule {
+	static class AgeRule {
 
         private boolean isExecuted;
 
@@ -200,7 +201,7 @@ public class FactInjectionTest {
     }
 
     @Rule
-    class WeatherRule {
+	static class WeatherRule {
 
         private boolean isExecuted;
 

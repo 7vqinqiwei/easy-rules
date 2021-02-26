@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -25,11 +25,19 @@ package org.jeasy.rules.api;
 
 import org.jeasy.rules.core.RuleProxy;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * This class encapsulates a set of rules and represents a rules namespace.
  * Rules must have a unique name within a rules namespace.
+ * 
+ * Rules will be compared to each other based on {@link Rule#compareTo(Object)}
+ * method, so {@link Rule}'s implementations are expected to correctly implement
+ * {@code compareTo} to ensure unique rule names within a single namespace.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
@@ -51,7 +59,7 @@ public class Rules implements Iterable<Rule> {
      *
      * @param rules to register
      */
-    public Rules(Rule... rules ) {
+    public Rules(Rule... rules) {
         Collections.addAll(this.rules, rules);
     }
 
@@ -60,41 +68,45 @@ public class Rules implements Iterable<Rule> {
      *
      * @param rules to register
      */
-    public Rules(Object... rules ) {
+    public Rules(Object... rules) {
+        this.register(rules);
+    }
+
+    /**
+     * Register one or more new rules.
+     *
+     * @param rules to register, must not be null
+     */
+    public void register(Object... rules) {
+        Objects.requireNonNull(rules);
         for (Object rule : rules) {
-            this.register(RuleProxy.asRule(rule));
+            Objects.requireNonNull(rule);
+            this.rules.add(RuleProxy.asRule(rule));
         }
     }
 
     /**
-     * Register a new rule.
+     * Unregister one or more rules.
      *
-     * @param rule to register
+     * @param rules to unregister, must not be null
      */
-    public void register(Object rule) {
-        Objects.requireNonNull(rule);
-        rules.add(RuleProxy.asRule(rule));
-    }
-
-    /**
-     * Unregister a rule.
-     *
-     * @param rule to unregister
-     */
-    public void unregister(Object rule) {
-        Objects.requireNonNull(rule);
-        rules.remove(RuleProxy.asRule(rule));
+    public void unregister(Object... rules) {
+        Objects.requireNonNull(rules);
+        for (Object rule : rules) {
+            Objects.requireNonNull(rule);
+            this.rules.remove(RuleProxy.asRule(rule));
+        }
     }
 
     /**
      * Unregister a rule by name.
      *
-     * @param ruleName the name of the rule to unregister
+     * @param ruleName name of the rule to unregister, must not be null
      */
-    public void unregister(final String ruleName){
+    public void unregister(final String ruleName) {
         Objects.requireNonNull(ruleName);
         Rule rule = findRuleByName(ruleName);
-        if(rule != null) {
+        if (rule != null) {
             unregister(rule);
         }
     }
@@ -115,16 +127,29 @@ public class Rules implements Iterable<Rule> {
         rules.clear();
     }
 
+    /**
+     * Return how many rules are currently registered.
+     *
+     * @return the number of rules currently registered
+     */
+    public int size() {
+        return rules.size();
+    }
+
+    /**
+     * Return an iterator on the rules set. It is not intended to remove rules
+     * using this iterator.
+     * @return an iterator on the rules set
+     */
     @Override
     public Iterator<Rule> iterator() {
         return rules.iterator();
     }
 
-    private Rule findRuleByName(String ruleName){
-        for(Rule rule : rules){
-            if(rule.getName().equalsIgnoreCase(ruleName))
-                return rule;
-        }
-        return null;
+    private Rule findRuleByName(String ruleName) {
+        return rules.stream()
+                .filter(rule -> rule.getName().equalsIgnoreCase(ruleName))
+                .findFirst()
+                .orElse(null);
     }
 }

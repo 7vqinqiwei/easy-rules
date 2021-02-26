@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
 package org.jeasy.rules.api;
 
 /**
- * A listener for rules execution events.
+ * A listener for rule execution events.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
@@ -37,7 +37,9 @@ public interface RuleListener {
      * @param facts known before evaluating the rule
      * @return true if the rule should be evaluated, false otherwise
      */
-    boolean beforeEvaluate(Rule rule, Facts facts);
+    default boolean beforeEvaluate(Rule rule, Facts facts) {
+        return true;
+    }
 
     /**
      * Triggered after the evaluation of a rule.
@@ -46,7 +48,16 @@ public interface RuleListener {
      * @param facts known after evaluating the rule
      * @param evaluationResult true if the rule evaluated to true, false otherwise
      */
-    void afterEvaluate(Rule rule, Facts facts, boolean evaluationResult);
+    default void afterEvaluate(Rule rule, Facts facts, boolean evaluationResult) { }
+
+    /**
+     * Triggered on condition evaluation error due to any runtime exception.
+     *
+     * @param rule that has been evaluated
+     * @param facts known while evaluating the rule
+     * @param exception that happened while attempting to evaluate the condition.
+     */
+    default void onEvaluationError(Rule rule, Facts facts, Exception exception) { }
 
     /**
      * Triggered before the execution of a rule.
@@ -54,7 +65,7 @@ public interface RuleListener {
      * @param rule the current rule
      * @param facts known facts before executing the rule
      */
-    void beforeExecute(Rule rule, Facts facts);
+    default void beforeExecute(Rule rule, Facts facts) { }
 
     /**
      * Triggered after a rule has been executed successfully.
@@ -62,15 +73,15 @@ public interface RuleListener {
      * @param rule the current rule
      * @param facts known facts after executing the rule
      */
-    void onSuccess(Rule rule, Facts facts);
+    default void onSuccess(Rule rule, Facts facts) { }
 
     /**
      * Triggered after a rule has failed.
      *
-     * @param rule      the current rule
+     * @param rule the current rule
      * @param facts known facts after executing the rule
      * @param exception the exception thrown when attempting to execute the rule
      */
-    void onFailure(Rule rule, Facts facts, Exception exception);
+    default void onFailure(Rule rule, Facts facts, Exception exception) { }
 
 }

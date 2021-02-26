@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jeasy</groupId>
         <artifactId>easy-rules</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>4.1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>easy-rules-support</artifactId>
@@ -25,8 +25,8 @@
     </issueManagement>
 
     <ciManagement>
-        <system>Travis CI</system>
-        <url>https://travis-ci.org/j-easy/easy-rules</url>
+        <system>Github Actions</system>
+        <url>https://github.com/j-easy/easy-rules/actions</url>
     </ciManagement>
 
     <developers>
@@ -49,6 +49,7 @@
     </licenses>
 
     <dependencies>
+        <!-- production dependencies -->
         <dependency>
             <groupId>org.jeasy</groupId>
             <artifactId>easy-rules-core</artifactId>
@@ -65,10 +66,10 @@
             <version>${jackson.version}</version>
         </dependency>
 
+        <!-- test dependencies -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j-api.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -93,25 +94,9 @@
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
-                <version>${maven-license-plugin.version}</version>
                 <configuration>
-                    <header>${project.basedir}/licence-header-template.txt</header>
-                    <properties>
-                        <currentYear>2019</currentYear>
-                    </properties>
-                    <strictCheck>true</strictCheck>
-                    <includes>
-                        <include>src/**/*.java</include>
-                    </includes>
+                    <header>${project.parent.basedir}/licence-header-template.txt</header>
                 </configuration>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>format</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

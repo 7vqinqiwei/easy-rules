@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -34,20 +34,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A {@link org.jeasy.rules.api.Rule} implementation that uses <a href="https://github.com/mvel/mvel">MVEL</a> to evaluate and execute the rule.
+ * A {@link org.jeasy.rules.api.Rule} implementation that uses
+ * <a href="https://github.com/mvel/mvel">MVEL</a> to evaluate and execute the rule.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
 public class MVELRule extends BasicRule {
 
     private Condition condition = Condition.FALSE;
-    private List<Action> actions = new ArrayList<>();
+    private final List<Action> actions = new ArrayList<>();
+    private final ParserContext parserContext;
 
     /**
      * Create a new MVEL rule.
      */
     public MVELRule() {
+        this(new ParserContext());
+    }
+
+    /**
+     * Create a new MVEL rule.
+     * 
+     * @param parserContext used to parse condition/action expressions
+     */
+    public MVELRule(ParserContext parserContext) {
         super(Rule.DEFAULT_NAME, Rule.DEFAULT_DESCRIPTION, Rule.DEFAULT_PRIORITY);
+        this.parserContext = parserContext;
     }
 
     /**
@@ -89,16 +101,6 @@ public class MVELRule extends BasicRule {
      * @return this rule
      */
     public MVELRule when(String condition) {
-        return this.when(condition, new ParserContext());
-    }
-
-    /**
-     * Specify the rule's condition as MVEL expression.
-     * @param condition of the rule
-     * @param parserContext the MVEL parser context
-     * @return this rule
-     */
-    public MVELRule when(String condition, ParserContext parserContext) {
         this.condition = new MVELCondition(condition, parserContext);
         return this;
     }
@@ -109,16 +111,6 @@ public class MVELRule extends BasicRule {
      * @return this rule
      */
     public MVELRule then(String action) {
-        return this.then(action, new ParserContext());
-    }
-
-    /**
-     * Add an action specified as an MVEL expression to the rule.
-     * @param action to add to the rule
-     * @param parserContext the MVEL parser context
-     * @return this rule
-     */
-    public MVELRule then(String action, ParserContext parserContext) {
         this.actions.add(new MVELAction(action, parserContext));
         return this;
     }

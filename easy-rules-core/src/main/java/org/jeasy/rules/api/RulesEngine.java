@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,9 @@
  */
 package org.jeasy.rules.api;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import org.jeasy.rules.core.RulesEngineParameters;
 
 /**
  * Rules engine interface.
@@ -47,14 +46,18 @@ public interface RulesEngine {
      *
      * @return the list of registered rule listeners
      */
-    List<RuleListener> getRuleListeners();
+    default List<RuleListener> getRuleListeners() {
+        return Collections.emptyList();
+    }
 
     /**
      * Return the list of registered rules engine listeners.
      *
      * @return the list of registered rules engine listeners
      */
-    List<RulesEngineListener> getRulesEngineListeners();
+    default List<RulesEngineListener> getRulesEngineListeners() {
+        return Collections.emptyList();
+    }
 
     /**
      * Fire all registered rules on given facts.
@@ -65,5 +68,7 @@ public interface RulesEngine {
      * Check rules without firing them.
      * @return a map with the result of evaluation of each rule
      */
-    Map<Rule, Boolean> check(Rules rules, Facts facts);
+    default Map<Rule, Boolean> check(Rules rules, Facts facts) {
+        return Collections.emptyMap();
+    }
 }

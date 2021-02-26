@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -27,12 +27,9 @@ import java.lang.annotation.Annotation;
 
 final class Utils {
 
-    private Utils() {
-
-    }
+    private Utils() { }
 
     static <A extends Annotation> A findAnnotation(final Class<A> targetAnnotation, final Class<?> annotatedType) {
-
         A foundAnnotation = annotatedType.getAnnotation(targetAnnotation);
         if (foundAnnotation == null) {
             for (Annotation annotation : annotatedType.getAnnotations()) {

@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,11 @@
  */
 package org.jeasy.rules.core;
 
-import org.jeasy.rules.annotation.*;
+import org.jeasy.rules.annotation.Action;
+import org.jeasy.rules.annotation.Condition;
+import org.jeasy.rules.annotation.Fact;
+import org.jeasy.rules.annotation.Priority;
+import org.jeasy.rules.annotation.Rule;
 import org.jeasy.rules.api.Facts;
 import org.jeasy.rules.api.Rules;
 import org.jeasy.rules.api.RulesEngine;
@@ -34,8 +38,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class InferenceRulesEngineTest {
 
+    @Test(expected = NullPointerException.class)
+    public void whenFireRules_thenNullRulesShouldNotBeAccepted() {
+        InferenceRulesEngine engine = new InferenceRulesEngine();
+        engine.fire(null, new Facts());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void whenFireRules_thenNullFactsShouldNotBeAccepted() {
+        InferenceRulesEngine engine = new InferenceRulesEngine();
+        engine.fire(new Rules(), null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void whenCheckRules_thenNullRulesShouldNotBeAccepted() {
+        InferenceRulesEngine engine = new InferenceRulesEngine();
+        engine.check(null, new Facts());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void whenCheckRules_thenNullFactsShouldNotBeAccepted() {
+        InferenceRulesEngine engine = new InferenceRulesEngine();
+        engine.check(new Rules(), null);
+    }
+
     @Test
-    public void testCandidateSelection() throws Exception {
+    public void testCandidateSelection() {
         // Given
         Facts facts = new Facts();
         facts.put("foo", true);
@@ -53,7 +81,7 @@ public class InferenceRulesEngineTest {
     }
 
     @Test
-    public void testCandidateOrdering() throws Exception {
+    public void testCandidateOrdering() {
         // Given
         Facts facts = new Facts();
         facts.put("foo", true);
@@ -118,7 +146,7 @@ public class InferenceRulesEngineTest {
     }
 
     @Rule
-    class DummyRule {
+	static class DummyRule {
 
         private boolean isExecuted;
         private long timestamp;
@@ -150,7 +178,7 @@ public class InferenceRulesEngineTest {
     }
 
     @Rule
-    class AnotherDummyRule {
+	static class AnotherDummyRule {
 
         private boolean isExecuted;
         private long timestamp;

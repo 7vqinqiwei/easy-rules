@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,11 @@ import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class RuleListenerTest extends AbstractTest {
 
@@ -46,7 +50,7 @@ public class RuleListenerTest extends AbstractTest {
     }
 
     @Test
-    public void whenTheRuleExecutesSuccessfully_thenOnSuccessShouldBeExecuted() throws Exception {
+    public void whenTheRuleExecutesSuccessfully_thenOnSuccessShouldBeExecuted() {
         // Given
         when(rule1.evaluate(facts)).thenReturn(true);
         rules.register(rule1);
@@ -82,7 +86,7 @@ public class RuleListenerTest extends AbstractTest {
     }
 
     @Test
-    public void whenListenerBeforeEvaluateReturnsFalse_thenTheRuleShouldBeSkippedBeforeBeingEvaluated() throws Exception {
+    public void whenListenerBeforeEvaluateReturnsFalse_thenTheRuleShouldBeSkippedBeforeBeingEvaluated() {
         // Given
         when(ruleListener1.beforeEvaluate(rule1, facts)).thenReturn(false);
         rules.register(rule1);
@@ -95,7 +99,7 @@ public class RuleListenerTest extends AbstractTest {
     }
 
     @Test
-    public void whenListenerBeforeEvaluateReturnsTrue_thenTheRuleShouldBeEvaluated() throws Exception {
+    public void whenListenerBeforeEvaluateReturnsTrue_thenTheRuleShouldBeEvaluated() {
         // Given
         when(ruleListener1.beforeEvaluate(rule1, facts)).thenReturn(true);
         rules.register(rule1);
@@ -108,7 +112,7 @@ public class RuleListenerTest extends AbstractTest {
     }
 
     @Test
-    public void whenTheRuleEvaluatesToTrue_thenTheListenerShouldBeInvoked() throws Exception {
+    public void whenTheRuleEvaluatesToTrue_thenTheListenerShouldBeInvoked() {
         // Given
         when(rule1.evaluate(facts)).thenReturn(true);
         rules.register(rule1);
@@ -121,7 +125,7 @@ public class RuleListenerTest extends AbstractTest {
     }
 
     @Test
-    public void whenTheRuleEvaluatesToFalse_thenTheListenerShouldBeInvoked() throws Exception {
+    public void whenTheRuleEvaluatesToFalse_thenTheListenerShouldBeInvoked() {
         // Given
         when(rule1.evaluate(facts)).thenReturn(false);
         rules.register(rule1);

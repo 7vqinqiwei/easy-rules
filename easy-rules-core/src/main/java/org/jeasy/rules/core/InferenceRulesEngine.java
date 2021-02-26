@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -23,18 +23,28 @@
  */
 package org.jeasy.rules.core;
 
-import org.jeasy.rules.api.*;
+import org.jeasy.rules.api.Facts;
+import org.jeasy.rules.api.Rule;
+import org.jeasy.rules.api.RuleListener;
+import org.jeasy.rules.api.Rules;
+import org.jeasy.rules.api.RulesEngine;
+import org.jeasy.rules.api.RulesEngineListener;
+import org.jeasy.rules.api.RulesEngineParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Inference {@link RulesEngine} implementation.
  *
- * Rules are selected based on given facts and fired according to their natural order which is priority by default.
- *
- * The engine continuously selects and fires rules until no more rules are applicable.
+ * Rules are selected based on given facts and fired according to their natural
+ * order which is priority by default. This implementation continuously selects
+ * and fires rules until no more rules are applicable.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
@@ -42,7 +52,7 @@ public final class InferenceRulesEngine extends AbstractRulesEngine {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InferenceRulesEngine.class);
 
-    private DefaultRulesEngine delegate;
+    private final DefaultRulesEngine delegate;
 
     /**
      * Create a new inference rules engine with default parameters.
@@ -63,11 +73,13 @@ public final class InferenceRulesEngine extends AbstractRulesEngine {
 
     @Override
     public void fire(Rules rules, Facts facts) {
+        Objects.requireNonNull(rules, "Rules must not be null");
+        Objects.requireNonNull(facts, "Facts must not be null");
         Set<Rule> selectedRules;
         do {
             LOGGER.debug("Selecting candidate rules based on the following facts: {}", facts);
             selectedRules = selectCandidates(rules, facts);
-            if(!selectedRules.isEmpty()) {
+            if (!selectedRules.isEmpty()) {
                 delegate.fire(new Rules(selectedRules), facts);
             } else {
                 LOGGER.debug("No candidate rules found for facts: {}", facts);
@@ -87,6 +99,8 @@ public final class InferenceRulesEngine extends AbstractRulesEngine {
 
     @Override
     public Map<Rule, Boolean> check(Rules rules, Facts facts) {
+        Objects.requireNonNull(rules, "Rules must not be null");
+        Objects.requireNonNull(facts, "Facts must not be null");
         return delegate.check(rules, facts);
     }
 

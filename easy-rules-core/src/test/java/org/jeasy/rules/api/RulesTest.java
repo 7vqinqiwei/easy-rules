@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -38,14 +38,14 @@ public class RulesTest {
     private Rules rules = new Rules();
 
     @Test
-    public void register() throws Exception {
+    public void register() {
         rules.register(new DummyRule());
 
         assertThat(rules).hasSize(1);
     }
 
     @Test
-    public void rulesMustHaveUniqueName() throws Exception {
+    public void rulesMustHaveUniqueName() {
         Rule r1 = new BasicRule("rule");
         Rule r2 = new BasicRule("rule");
         Set<Rule> ruleSet = new HashSet<>();
@@ -58,7 +58,7 @@ public class RulesTest {
     }
 
     @Test
-    public void unregister() throws Exception {
+    public void unregister() {
         DummyRule rule = new DummyRule();
         rules.register(rule);
         rules.unregister(rule);
@@ -67,7 +67,7 @@ public class RulesTest {
     }
 
     @Test
-    public void unregisterByName() throws Exception {
+    public void unregisterByName() {
         Rule r1 = new BasicRule("rule1");
         Rule r2 = new BasicRule("rule2");
         Set<Rule> ruleSet = new HashSet<>();
@@ -81,7 +81,7 @@ public class RulesTest {
     }
     
     @Test
-    public void unregisterByNameNonExistingRule() throws Exception {
+    public void unregisterByNameNonExistingRule() {
         Rule r1 = new BasicRule("rule1");
         Set<Rule> ruleSet = new HashSet<>();
         ruleSet.add(r1);
@@ -93,12 +93,12 @@ public class RulesTest {
     }
 
     @Test
-    public void isEmpty() throws Exception {
+    public void isEmpty() {
         assertThat(rules.isEmpty()).isTrue();
     }
 
     @Test
-    public void clear() throws Exception {
+    public void clear() {
         rules.register(new DummyRule());
         rules.clear();
 
@@ -106,7 +106,7 @@ public class RulesTest {
     }
 
     @Test
-    public void sort() throws Exception {
+    public void sort() {
         Rule r1 = new BasicRule("rule", "", 1);
         Rule r2 = new BasicRule("rule", "", Integer.MAX_VALUE);
         DummyRule r3 = new DummyRule();
@@ -118,23 +118,52 @@ public class RulesTest {
         assertThat(rules).startsWith(r1).endsWith(r2);
     }
 
+    @Test
+    public void size() {
+        assertThat(rules.size()).isEqualTo(0);
+
+        rules.register(new DummyRule());
+        assertThat(rules.size()).isEqualTo(1);
+
+        rules.unregister(new DummyRule());
+        assertThat(rules.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void register_multiple() {
+        rules.register(new BasicRule("ruleA"), new BasicRule("ruleB"));
+        assertThat(rules.size()).isEqualTo(2);
+    }
+
+    @Test
+    public void unregister_noneLeft() {
+        rules.register(new BasicRule("ruleA"), new BasicRule("ruleB"));
+        assertThat(rules.size()).isEqualTo(2);
+
+        rules.unregister(new BasicRule("ruleA"), new BasicRule("ruleB"));
+        assertThat(rules.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void unregister_oneLeft() {
+        rules.register(new BasicRule("ruleA"), new BasicRule("ruleB"));
+        assertThat(rules.size()).isEqualTo(2);
+
+        rules.unregister(new BasicRule("ruleA"));
+        assertThat(rules.size()).isEqualTo(1);
+    }
+
     @Test(expected = NullPointerException.class)
-    public void whenRegisterNullRule_thenShouldThrowNullPointerException() throws Exception {
+    public void whenRegisterNullRule_thenShouldThrowNullPointerException() {
         rules.register(null);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void whenUnregisterNullRule_thenShouldThrowNullPointerException() throws Exception {
-        rules.unregister(null);
-    }
-
     @org.jeasy.rules.annotation.Rule
-    class DummyRule {
+	static class DummyRule {
         @Condition
         public boolean when() { return true; }
 
         @Action
         public void then() { }
     }
-
 }

@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ import java.util.List;
  * Rule definition as defined in a rule descriptor.
  * This class encapsulates the static definition of a {@link Rule}.
  *
- * A rule definition is produced by a {@link RuleDefinitionReader}
+ * Rule definitions are produced by a {@code RuleDefinitionReader}s
  * and consumed by rule factories to create rules.
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)

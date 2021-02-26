@@ -1,7 +1,7 @@
-/**
+/*
  * The MIT License
  *
- *  Copyright (c) 2019, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
+ *  Copyright (c) 2021, Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@ package org.jeasy.rules.api;
  *
  * @author Mahmoud Ben Hassine (mahmoud.benhassine@icloud.com)
  */
+@FunctionalInterface
 public interface Condition {
 
     /**
@@ -42,20 +43,10 @@ public interface Condition {
     /**
      * A NoOp {@link Condition} that always returns false.
      */
-    Condition FALSE = new Condition() {
-        @Override
-        public boolean evaluate(Facts facts) {
-            return false;
-        }
-    };
+    Condition FALSE = facts -> false;
 
     /**
      * A NoOp {@link Condition} that always returns true.
      */
-    Condition TRUE = new Condition() {
-        @Override
-        public boolean evaluate(Facts facts) {
-            return true;
-        }
-    };
+    Condition TRUE = facts -> true;
 }
